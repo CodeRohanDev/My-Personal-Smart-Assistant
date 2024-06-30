@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "97974968636",
+    "project_id": "my-personal-smart-assistant",
+    "storage_bucket": "my-personal-smart-assistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97974968636:android:a9315bae7aaf8a25bcbe39",
+        "android_client_info": {
+          "package_name": "com.example.my_personal_smart_assistant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPiIQeV15wB0VtIwOLb3Ko2Ow7o1iWYm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
