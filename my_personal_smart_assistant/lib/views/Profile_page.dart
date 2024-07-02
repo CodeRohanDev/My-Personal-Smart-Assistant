@@ -28,7 +28,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> fetchUserData() async {
     DataSnapshot snapshot = await userRef.get();
     setState(() {
-      userData = Map<String, dynamic>.from(snapshot.value as Map);
+      if (snapshot.value != null) {
+        userData = Map<String, dynamic>.from(snapshot.value as Map);
+      } else {
+        userData = {};
+      }
       print(userData); // Check the structure here
     });
   }
@@ -58,7 +62,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           backgroundImage: NetworkImage(
                             userData?['Personal Details']?['ProfilePicture'] ??
                                 'https://via.placeholder.com/150',
-                            scale: 1,
                             headers: {'Cache-Control': 'no-cache'},
                           ),
                         ),

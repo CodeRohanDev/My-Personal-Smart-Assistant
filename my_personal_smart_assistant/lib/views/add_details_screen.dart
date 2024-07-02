@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_to_list_in_spreads
+// ignore_for_file: prefer_const_constructors, unnecessary_to_list_in_spreads, avoid_print, use_rethrow_when_possible, use_build_context_synchronously, unnecessary_import, unused_import, library_private_types_in_public_api, use_key_in_widget_constructors, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';

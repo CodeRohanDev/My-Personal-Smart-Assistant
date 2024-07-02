@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_declarations
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart'; // For Clipboard
 
 class ChatScreen extends StatefulWidget {
   final User? user;
@@ -14,10 +15,15 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen>
+    with AutomaticKeepAliveClientMixin<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
+  final ScrollController _scrollController = ScrollController();
   DatabaseReference? _chatRef;
+
+  @override
+  bool get wantKeepAlive => true; // Keep the state alive when switching pages
 
   @override
   void initState() {
@@ -58,6 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     _controller.clear();
     _saveMessageToDatabase(message);
+    _scrollToBottom(); // Scroll to bottom when user sends a message
 
     final response = await _fetchAIResponse(text);
     final aiMessage = {
@@ -69,6 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(aiMessage);
     });
     _saveMessageToDatabase(aiMessage);
+    _scrollToBottom(); // Scroll to bottom when AI responds
   }
 
   Future<String> _fetchAIResponse(String query) async {
@@ -126,53 +134,193 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Copied to clipboard')),
+    );
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    super
+        .build(context); // Ensure super.build is called to keep the state alive
     return Scaffold(
-      appBar: AppBar(title: Text('AI Tutor')),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                return ListTile(
-                  title: Text(
-                    message['text']!,
-                    style: TextStyle(
-                      color: message['sender'] == 'user'
-                          ? Colors.blue
-                          : Colors.green,
+      appBar: AppBar(
+        title: Text(
+          'AI Tutor',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            letterSpacing: 1,
+            color: Colors.white,
+            fontFamily: 'RobotoMono', // Custom font
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 20, 20, 20),
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 20, 20, 20),
+              const Color.fromARGB(255, 20, 20, 20)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  final isUser = message['sender'] == 'user';
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: Align(
+                      alignment:
+                          isUser ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: isUser
+                              ? Color.fromARGB(255, 43, 40, 40)
+                              : Color.fromARGB(255, 43, 40, 40),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                            bottomLeft: isUser
+                                ? Radius.circular(15)
+                                : Radius.circular(0),
+                            bottomRight: isUser
+                                ? Radius.circular(0)
+                                : Radius.circular(15),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: isUser
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: isUser
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  isUser ? 'You' : 'AI',
+                                  style: TextStyle(
+                                    color: isUser
+                                        ? const Color.fromARGB(
+                                            255, 255, 255, 255)
+                                        : const Color.fromARGB(
+                                            255, 255, 255, 255),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'RobotoMono',
+                                  ),
+                                ),
+                                if (!isUser)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: IconButton(
+                                      icon: Icon(Icons.copy,
+                                          color: Color.fromARGB(
+                                              255, 255, 255, 255),
+                                          size: 16),
+                                      onPressed: () =>
+                                          _copyToClipboard(message['text']!),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              message['text']!,
+                              style: TextStyle(
+                                color: isUser
+                                    ? const Color.fromARGB(255, 255, 255, 255)
+                                    : const Color.fromARGB(255, 255, 255, 255),
+                                fontSize: 18,
+                                letterSpacing: 0.8,
+                                wordSpacing: 1,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RobotoMono',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Type your message',
+                        hintStyle: TextStyle(
+                          fontFamily: 'RobotoMono',
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      ),
                     ),
                   ),
-                  subtitle: Text(message['sender']!),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(hintText: 'Type your message'),
+                  SizedBox(width: 8),
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Colors.deepPurple,
+                    child: IconButton(
+                      icon: Icon(Icons.send, color: Colors.white),
+                      onPressed: () {
+                        if (_controller.text.isNotEmpty) {
+                          _sendMessage(_controller.text);
+                        }
+                      },
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    if (_controller.text.isNotEmpty) {
-                      _sendMessage(_controller.text);
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
