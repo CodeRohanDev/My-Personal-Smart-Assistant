@@ -1,0 +1,43 @@
+{
+  "Users": {
+    "UID": {
+      "Disease Details": {
+        "Type of Disease": {
+          "Blood Pressure": {
+            "Stage": "Stage 3"
+          },
+          "Blood Sugar": {
+            "Stage": "Stage 2"
+          }
+        }
+      },
+      "Personal Details": {
+        "Age": 22,
+        "Gender": "Male",
+        "Height": 171,
+        "Name": "Rohan",
+        "Weight": {
+          "Gm": 500,
+          "Kg": 76
+        }
+      },
+      "Pet Details": {
+        "Animal Type": {
+          "Dog": {
+            "Age": {
+              "Month": 9,
+              "Year": 0
+            },
+            "Bread": "German Shepherded",
+            "Gender": "Male",
+            "Name": "Tuffy",
+            "Weight": {
+              "Gm": 600,
+              "Kg": 32
+            }
+          }
+        }
+      }
+    }
+  }
+}
