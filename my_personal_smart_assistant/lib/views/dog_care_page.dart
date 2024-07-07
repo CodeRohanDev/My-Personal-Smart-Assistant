@@ -14,7 +14,7 @@ class _DogCarePageState extends State<DogCarePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("This is Dog Care Page"),
+        child: Text("This is Dog Care Pages"),
       ),
     );
   }

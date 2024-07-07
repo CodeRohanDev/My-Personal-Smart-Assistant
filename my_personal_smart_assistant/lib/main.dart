@@ -7,6 +7,7 @@ import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:my_personal_smart_assistant/views/Profile_page.dart';
 import 'package:my_personal_smart_assistant/views/cook_page.dart';
 import 'package:my_personal_smart_assistant/views/dog_care_page.dart';
+import 'package:my_personal_smart_assistant/views/health_page.dart';
 import 'package:my_personal_smart_assistant/views/home_screen.dart';
 import 'package:my_personal_smart_assistant/views/login_screen.dart';
 import 'package:my_personal_smart_assistant/views/splash_screen.dart';
@@ -14,7 +15,7 @@ import 'package:my_personal_smart_assistant/views/tutor_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -27,11 +28,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/', // Set your default route if needed
+      initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(), // Example default route
-        '/login': (context) => LoginScreen(), // Route for login screen
-        // Add more routes as needed
+        '/': (context) => SplashScreen(),
+        '/login': (context) => LoginScreen(),
       },
     );
   }
@@ -43,13 +43,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0; // Start with Home page as default
+  int _currentIndex = 0;
 
-  // Define the pages with their corresponding widgets
   final List<Widget> _pages = [
     HomeScreen(),
-    DogCarePage(),
-    CookPage(),
+    HealthScreen(),
+    CookScreen(),
     ChatScreen(),
     ProfilePage(),
   ];
@@ -72,10 +71,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           FlashyTabBarItem(
             icon: Icon(
-              Icons.pets,
+              Icons.health_and_safety_sharp,
               size: 30,
             ),
-            title: Text('Dog Care'),
+            title: Text('Health'),
           ),
           FlashyTabBarItem(
             icon: Icon(

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, use_key_in_widget_constructors, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors, unused_import, use_key_in_widget_constructors, use_build_context_synchronously, unused_element
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -21,12 +21,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text('Home'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () => _signOut(context),
-            ),
-          ],
+          centerTitle: true,
         ),
         body: Center(
           child: Text("This is home page"),
